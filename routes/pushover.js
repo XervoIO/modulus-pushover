@@ -1,5 +1,7 @@
 var push = require( 'pushover-notifications' );
 
+var moment = require('moment');
+
 var TOKEN = "asD4LmDWiGMhnSBy6aUNyC5kfRZZ8S";
 
 module.exports = {
@@ -9,18 +11,22 @@ module.exports = {
     var user = req.param('user');
 
     if (!user){
+      console.log("ERRR USER NOT found");
       return res.send(400, "User not found");
     }
 
-    var body = JSON.parse(req.rawBody);
+    console.log("parsing body");
 
-    var type = body.type;
-    var project = body.project;
+
+    var type = req.body.type;
+    var project = req.body.project;
 
     console.log(type, project);
 
     var messageAction;
     var priority = 0;
+
+    var time = moment().format("dddd, MMMM Do YYYY, h:mm:ss a");
 
 
     switch(type){
@@ -56,7 +62,7 @@ module.exports = {
 
     var msg = {
         title: project.name + messageAction,
-        message: "Name : " + project.name + "\n" + "Time of " + type + ": " + project.created_date + "\n" + "URL : " + project.domain + "\n" + "Log on to modulus.io for more details\n"
+        message: "Project name : " + project.name + "\n\n" + "Time of " + type + ": " + time + "\n\n" + "Project URL : " + project.domain + "\n\n" + "Log on to modulus.io for more details\n"
     };
 
     p.send( msg, function( err, result ) {

@@ -15,20 +15,6 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(function(req, res, next) {
-  req.rawBody = '';
-  req.setEncoding('utf8');
-
-  console.log("hello");
-
-  req.on('data', function(chunk) { 
-    req.rawBody += chunk;
-  });
-
-  req.on('end', function() {
-    next();
-  });
-});
 app.use(express.bodyParser());
 app.use(express.favicon());
 app.use(express.logger('dev'));
