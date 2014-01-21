@@ -2,33 +2,36 @@ var push = require( 'pushover-notifications' );
 
 var moment = require('moment');
 
-var TOKEN = "asD4LmDWiGMhnSBy6aUNyC5kfRZZ8S";
+//Api token from push over
+var TOKEN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
 
 module.exports = {
     
    send: function (req, res) {
 
+    //Grab user token from params
     var user = req.param('user');
 
+    //if no user is found, return a 400
     if (!user){
-      console.log("ERRR USER NOT found");
       return res.send(400, "User not found");
     }
 
-    console.log("parsing body");
-
-
+    //Modulus will include an object in the POST request
+    //Grab the type of action
     var type = req.body.type;
+    //Grab the project details
     var project = req.body.project;
 
-    console.log(type, project);
-
     var messageAction;
+    // Pushover has priorty settings. Learn more here: https://pushover.net/api#priority
     var priority = 0;
 
+    // Grab current time
     var time = moment().format("dddd, MMMM Do YYYY, h:mm:ss a");
 
-
+    //We want the message to be different depending on the type
     switch(type){
     case "start":
       messageAction = " has been started.";
@@ -53,27 +56,29 @@ module.exports = {
       return res.send(400, "Type not found");
     }
 
-
+    //Create a Pushover object with the user, token , and priority 
     var p = new push( {
         user: user,
         token: TOKEN,
         priority: priority
     });
 
+    //Create our message and title
     var msg = {
         title: project.name + messageAction,
         message: "Project name : " + project.name + "\n\n" + "Time of " + type + ": " + time + "\n\n" + "Project URL : " + project.domain + "\n\n" + "Log on to modulus.io for more details\n"
     };
 
+    //Send to phone
     p.send( msg, function( err, result ) {
+
         if ( err ) {
             throw err;
         }
 
-        console.log( result );
     });
     
-    // Send a JSON response
+    // Send a 200 response
     return res.send(200);
   },
 
